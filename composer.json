@@ -1,0 +1,25 @@
+{
+    "name": "davenaylor/sportspress",
+    "version": "1.9.7",
+    "description": "SportsPress",
+    "homepage": "https://wpranger.co.uk",
+    "require": {
+        "wp-cli/wp-cli": ">=0.16"
+    },
+    "license": "GPLv2",
+    "keywords": ["SportsPress","ssh","remote"],
+    "authors": [
+        {
+            "name": "Dave Naylor",
+            "email": "dave@wpranger,co.uk",
+            "homepage": "https://caramboo.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4"
+    },
+    "type": "wordpress-plugin"
+}
+
+
