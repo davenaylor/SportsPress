@@ -5,7 +5,7 @@
  * The SportsPress admin sports class stores preset sport data.
  *
  * @class 		SP_Admin_Sports
- * @version		1.9
+ * @version		1.9.19
  * @package		SportsPress/Admin
  * @category	Class
  * @author 		ThemeBoy
@@ -167,6 +167,7 @@ class SP_Admin_Sports {
 			update_post_meta( $id, 'sp_icon', sp_array_value( $performance, 'icon', null ) );
 			update_post_meta( $id, 'sp_color', sp_array_value( $performance, 'color', null ) );
 			update_post_meta( $id, 'sp_section', sp_array_value( $performance, 'section', -1 ) );
+			update_post_meta( $id, 'sp_format', sp_array_value( $performance, 'format', 'number' ) );
 			$i ++;
 		}
 

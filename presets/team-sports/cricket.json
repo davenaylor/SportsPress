@@ -18,7 +18,7 @@
 						{ "name" : "BP", "description" : "Bonus points"}
 	],
 	"performance": [
-						{ "name" : "&nbsp;", "id" : "notes", "section" : 0, "description" : "Notes" },
+						{ "name" : "&nbsp;", "id" : "notes", "section" : 0, "format" : "text", "description" : "Notes" },
 						{ "name" : "R", "id" : "runs", "section" : 0, "description" : "Runs" },
 						{ "name" : "B", "section" : 0, "description" : "Balls" },
 						{ "name" : "4s", "section" : 0, "description" : "Fours" },
@@ -60,8 +60,7 @@
 						"event_performance_mode" : "values",
 						"event_show_player_numbers" : "no",
 						"event_show_position" : "no",
-						"event_split_players_by_team" : "yes",
-						"event_split_players_by_position" : "yes",
-						"event_total_performance" : "primary"
+						"event_total_performance" : "primary",
+						"event_performance_sections" : 0
 	}
 }

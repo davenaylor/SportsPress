@@ -5,7 +5,7 @@ Plugin URI: http://tboy.co/pro
 Description: Load players using Ajax to speed up the event edit screen.
 Author: ThemeBoy
 Author URI: http://themeboy.com
-Version: 1.9
+Version: 1.9.19
 */
 
 // Exit if accessed directly
@@ -17,7 +17,7 @@ if ( ! class_exists( 'SportsPress_Lazy_Loading' ) ) :
  * Main SportsPress Lazy Loading Class
  *
  * @class SportsPress_Lazy_Loading
- * @version	1.9
+ * @version	1.9.19
  */
 class SportsPress_Lazy_Loading {
 
@@ -37,8 +37,19 @@ class SportsPress_Lazy_Loading {
 		check_ajax_referer( 'sp-get-players', 'nonce' );
 
 		$team = sp_array_value( $_POST, 'team' );
-		$league = sp_array_value( $_POST, 'league' );
-		$season = sp_array_value( $_POST, 'season' );
+		
+		if ( 'yes' == get_option( 'sportspress_event_filter_teams_by_league', 'no' ) ) {
+			$league = sp_array_value( $_POST, 'league' );
+		} else {
+			$league = false;
+		}
+		
+		if ( 'yes' == get_option( 'sportspress_event_filter_teams_by_season', 'no' ) ) {
+			$season = sp_array_value( $_POST, 'season' );
+		} else {
+			$season = false;
+		}
+		
 		$index = sp_array_value( $_POST, 'index', 1 );
 		$selected = sp_array_value( $_POST, 'selected', array() );
 
@@ -109,9 +120,18 @@ class SportsPress_Lazy_Loading {
 		} else {
 			$selected = sp_array_between( (array)get_post_meta( $post_id, $post_type, false ), 0, $index );
 		}
-
-		$leagues = get_the_terms( $post_id, 'sp_league' );
-		$seasons = get_the_terms( $post_id, 'sp_season' );
+		
+		if ( 'yes' == get_option( 'sportspress_event_filter_teams_by_league', 'no' ) ) {
+			$leagues = get_the_terms( $post_id, 'sp_league' );
+		} else {
+			$leagues = false;
+		}
+		
+		if ( 'yes' == get_option( 'sportspress_event_filter_teams_by_season', 'no' ) ) {
+			$seasons = get_the_terms( $post_id, 'sp_season' );
+		} else {
+			$seasons = false;
+		}
 
 		$args = array(
 			'orderby' => 'menu_order',

@@ -5,7 +5,7 @@
  * @author 		ThemeBoy
  * @category 	Admin
  * @package 	SportsPress/Admin/Meta_Boxes
- * @version     1.9.6
+ * @version     1.9.19
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -93,6 +93,7 @@ class SP_Meta_Box_Equation {
 			<div class="sp-equation">
 				<span class="sp-equation-variable"><?php echo $title; ?> = </span>
 				<span class="sp-equation-formula"><?php
+					$equation = trim( $equation );
 					if ( $equation !== '' ):
 						$equation = explode( ' ', $equation );
 						foreach ( $equation as $part ):
