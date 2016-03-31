@@ -22,24 +22,44 @@ class SP_Meta_Box_Player_Statistics {
 		$player = new SP_Player( $post );
 		$leagues = get_the_terms( $post->ID, 'sp_league' );
 		$league_num = sizeof( $leagues );
+		$sections = get_option( 'sportspress_player_performance_sections', -1 );
 
-		// Loop through statistics for each league
-		if ( $leagues ):
-			$i = 0;
-			foreach ( $leagues as $league ):
-				?>
-				<p><strong><?php echo $league->name; ?></strong></p>
-				<?php
-				list( $columns, $data, $placeholders, $merged, $seasons_teams ) = $player->data( $league->term_id, true );
-				self::table( $post->ID, $league->term_id, $columns, $data, $placeholders, $merged, $seasons_teams, $i == 0 );
-				$i ++;
-			endforeach;
-		endif;
-		?>
-		<p><strong><?php _e( 'Career Total', 'sportspress' ); ?></strong></p>
-		<?php
-		list( $columns, $data, $placeholders, $merged, $seasons_teams ) = $player->data( 0, true );
-		self::table( $post->ID, 0, $columns, $data, $placeholders, $merged, $seasons_teams );
+		if ( $leagues ) {
+			if ( -1 == $sections ) {
+				// Loop through statistics for each league
+				$i = 0;
+				foreach ( $leagues as $league ):
+					?>
+					<p><strong><?php echo $league->name; ?></strong></p>
+					<?php
+					list( $columns, $data, $placeholders, $merged, $seasons_teams ) = $player->data( $league->term_id, true );
+					self::table( $post->ID, $league->term_id, $columns, $data, $placeholders, $merged, $seasons_teams, $i == 0 );
+					$i ++;
+				endforeach;
+			} else {
+				// Determine order of sections
+				if ( 1 == $sections ) {
+					$section_order = array( 1 => __( 'Defense', 'sportspress' ), 0 => __( 'Offense', 'sportspress' ) );
+				} else {
+					$section_order = array( __( 'Offense', 'sportspress' ), __( 'Defense', 'sportspress' ) );
+				}
+				
+				$s = 0;
+				foreach ( $section_order as $section_id => $section_label ) {
+					// Loop through statistics for each league
+					$i = 0;
+					foreach ( $leagues as $league ):
+						?>
+						<p><strong><?php echo $league->name; ?> &mdash; <?php echo $section_label; ?></strong></p>
+						<?php
+						list( $columns, $data, $placeholders, $merged, $seasons_teams ) = $player->data( $league->term_id, true, $section_id );
+						self::table( $post->ID, $league->term_id, $columns, $data, $placeholders, $merged, $seasons_teams, $i == 0 && $s == 0 );
+						$i ++;
+					endforeach;
+					$s ++;
+				}
+			}
+		}
 	}
 
 	/**
@@ -78,33 +98,47 @@ class SP_Meta_Box_Player_Statistics {
 						<?php endforeach; ?>
 					</tr>
 				</thead>
+				<tfoot>
+					<?php $div_stats = sp_array_value( $data, 0, array() ); ?>
+					<tr class="sp-row sp-total">
+						<td>
+							<label><strong><?php _e( 'Total', 'sportspress' ); ?></strong></label>
+						</td>
+						<td>&nbsp;</td>
+						<?php foreach ( $columns as $column => $label ): if ( $column == 'team' ) continue;
+							?>
+							<td><?php
+								$value = sp_array_value( sp_array_value( $data, 0, array() ), $column, null );
+								$placeholder = sp_array_value( sp_array_value( $placeholders, 0, array() ), $column, 0 );
+								if ( $readonly )
+									echo $value ? $value : $placeholder;
+								else
+									echo '<input type="text" name="sp_statistics[' . $league_id . '][0][' . $column . ']" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $placeholder ) . '"' . ( $readonly ? ' disabled="disabled"' : '' ) . ' data-sp-format="number" />';
+							?></td>
+						<?php endforeach; ?>
+					</tr>
+				</tfoot>
 				<tbody>
 					<?php
 					$i = 0;
 					foreach ( $data as $div_id => $div_stats ):
 						if ( $div_id === 'statistics' ) continue;
+						if ( $div_id === 0 ) continue;
 						$div = get_term( $div_id, 'sp_season' );
 						?>
 						<tr class="sp-row sp-post<?php if ( $i % 2 == 0 ) echo ' alternate'; ?>">
 							<td>
-								<?php if ( 0 !== $div_id ): ?>
-									<label>
-										<?php if ( ! apply_filters( 'sportspress_player_team_statistics', $league_id ) ): ?>
-											<?php $value = sp_array_value( $leagues, $div_id, '-1' ); ?>
-											<input type="hidden" name="sp_leagues[<?php echo $league_id; ?>][<?php echo $div_id; ?>]" value="-1">
-											<input type="checkbox" name="sp_leagues[<?php echo $league_id; ?>][<?php echo $div_id; ?>]" value="1" <?php checked( $value ); ?>>
-										<?php endif; ?>
-										<?php
-										if ( 'WP_Error' == get_class( $div ) ) _e( 'Total', 'sportspress' );
-										else echo $div->name;
-										?>
-									</label>
-								<?php else: ?>
+								<label>
+									<?php if ( ! apply_filters( 'sportspress_player_team_statistics', $league_id ) ): ?>
+										<?php $value = sp_array_value( $leagues, $div_id, '-1' ); ?>
+										<input type="hidden" name="sp_leagues[<?php echo $league_id; ?>][<?php echo $div_id; ?>]" value="-1">
+										<input type="checkbox" name="sp_leagues[<?php echo $league_id; ?>][<?php echo $div_id; ?>]" value="1" <?php checked( $value ); ?>>
+									<?php endif; ?>
 									<?php
-									if ( 'WP_Error' == get_class( $div ) ) _e( 'Total', 'sportspress' );
-									else echo $div->name;
+									if ( 0 === $div_id ) _e( 'Total', 'sportspress' );
+									elseif ( 'WP_Error' != get_class( $div ) ) echo $div->name;
 									?>
-								<?php endif; ?>
+								</label>
 							</td>
 							<?php if ( apply_filters( 'sportspress_player_team_statistics', $league_id ) ): ?>
 								<?php if ( $div_id == 0 ): ?>

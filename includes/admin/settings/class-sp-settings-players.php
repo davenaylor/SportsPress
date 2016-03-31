@@ -73,6 +73,14 @@ class SP_Settings_Players extends SP_Settings_Page {
 					'id' 		=> 'sportspress_player_show_statistics',
 					'default'	=> 'yes',
 					'type' 		=> 'checkbox',
+					'checkboxgroup'		=> '',
+				),
+
+				array(
+					'desc' 		=> __( 'Total', 'sportspress' ),
+					'id' 		=> 'sportspress_player_show_total',
+					'default'	=> 'no',
+					'type' 		=> 'checkbox',
 					'checkboxgroup'		=> 'end',
 				),
 
@@ -123,6 +131,29 @@ class SP_Settings_Players extends SP_Settings_Page {
 					'default'	=> 'no',
 					'type' 		=> 'checkbox',
 					'checkboxgroup'		=> 'end',
+				),
+
+				array(
+					'title' 	=> __( 'Columns', 'sportspress' ),
+					'id' 		=> 'sportspress_player_columns',
+					'default'	=> 'auto',
+					'type' 		=> 'radio',
+					'options' => array(
+						'auto'		=> __( 'Auto', 'sportspress' ),
+						'manual'	=> __( 'Manual', 'sportspress' ),
+					),
+				),
+
+				array(
+					'title' 	=> __( 'Statistics', 'sportspress' ),
+					'id' 		=> 'sportspress_player_performance_sections',
+					'default'	=> -1,
+					'type' 		=> 'radio',
+					'options' => array(
+						-1	  => __( 'Combined', 'sportspress' ),
+						0	  => __( 'Offense', 'sportspress' ) . ' &rarr; ' . __( 'Defense', 'sportspress' ),
+						1	  => __( 'Defense', 'sportspress' ) . ' &rarr; ' . __( 'Offense', 'sportspress' ),
+					),
 				),
 
 				array(
