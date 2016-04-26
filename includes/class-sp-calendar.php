@@ -5,7 +5,7 @@
  * The SportsPress calendar class handles individual calendar data.
  *
  * @class 		SP_Calendar
- * @version     1.9
+ * @version     2.0
  * @package		SportsPress/Classes
  * @category	Class
  * @author 		ThemeBoy
@@ -34,6 +34,15 @@ class SP_Calendar extends SP_Custom_Post {
 	/** @var int The season ID. */
 	public $season;
 
+	/** @var int The venue ID. */
+	public $venue;
+
+	/** @var int The team ID. */
+	public $team;
+
+	/** @var int Number of events. */
+	public $number;
+
 	/**
 	 * __construct function.
 	 *
@@ -52,6 +61,7 @@ class SP_Calendar extends SP_Custom_Post {
 		$this->status = $this->__get( 'status' );
 		$this->date = $this->__get( 'date' );
 		$this->order = $this->__get( 'order' );
+		$this->number = $this->__get( 'number' );
 
 		if ( ! $this->status )
 			$this->status = 'any';
@@ -67,6 +77,9 @@ class SP_Calendar extends SP_Custom_Post {
 
 		if ( ! $this->to )
 			$this->to = get_post_meta( $this->ID, 'sp_date_to', true );
+
+		if ( ! $this->number )
+			$this->number = 500;
 	}
 
 	/**
@@ -80,8 +93,7 @@ class SP_Calendar extends SP_Custom_Post {
 
 		$args = array(
 			'post_type' => 'sp_event',
-			'numberposts' => -1,
-			'posts_per_page' => -1,
+			'posts_per_page' => $this->number,
 			'orderby' => 'date',
 			'order' => $this->order,
 			'post_status' => $this->status,
@@ -111,6 +123,20 @@ class SP_Calendar extends SP_Custom_Post {
 			$season_ids = array( $this->season );
 		endif;
 
+		if ( $this->venue ):
+			$venue_ids = array( $this->venue );
+		endif;
+
+		if ( $this->team ):
+			$args['meta_query']	= array(
+				array(
+					'key' => 'sp_team',
+					'value' => array( $this->team ),
+					'compare' => 'IN',
+				),
+			);
+		endif;
+
 		if ( $pagenow != 'post-new.php' ):
 			if ( $this->ID ):
 				$leagues = get_the_terms( $this->ID, 'sp_league' );
@@ -126,14 +152,6 @@ class SP_Calendar extends SP_Custom_Post {
 					endforeach;
 				endif;
 
-				if ( isset( $league_ids ) ) {
-					$args['tax_query'][] = array(
-						'taxonomy' => 'sp_league',
-						'field' => 'id',
-						'terms' => $league_ids
-					);
-				}
-
 				if ( ! isset( $season_ids ) && $seasons ):
 					$season_ids = array();
 					foreach( $seasons as $season ):
@@ -141,39 +159,67 @@ class SP_Calendar extends SP_Custom_Post {
 					endforeach;
 				endif;
 
-				if ( isset( $season_ids ) ) {
-					$args['tax_query'][] = array(
-						'taxonomy' => 'sp_season',
-						'field' => 'id',
-						'terms' => $season_ids
-					);
-				}
-
-				if ( $venues ):
+				if ( ! isset( $venue_ids ) && $venues ):
 					$venue_ids = array();
 					foreach( $venues as $venue ):
 						$venue_ids[] = $venue->term_id;
 					endforeach;
-					$args['tax_query'][] = array(
-						'taxonomy' => 'sp_venue',
-						'field' => 'id',
-						'terms' => $venue_ids
-					);
 				endif;
-
-				if ( ! empty( $teams ) ):
-					$args['meta_query']	= array(
-						array(
-							'key' => 'sp_team',
-							'value' => $teams,
-							'compare' => 'IN',
-						),
-					);
-				endif;
-
 			endif;
 			
-			$events = get_posts( $args );
+
+			if ( isset( $league_ids ) ) {
+				$args['tax_query'][] = array(
+					'taxonomy' => 'sp_league',
+					'field' => 'id',
+					'terms' => $league_ids
+				);
+			}
+
+			if ( isset( $season_ids ) ) {
+				$args['tax_query'][] = array(
+					'taxonomy' => 'sp_season',
+					'field' => 'id',
+					'terms' => $season_ids
+				);
+			}
+
+			if ( isset( $venue_ids ) ) {
+				$args['tax_query'][] = array(
+					'taxonomy' => 'sp_venue',
+					'field' => 'id',
+					'terms' => $venue_ids
+				);
+			}
+
+			if ( ! empty( $teams ) ) {
+				$args['meta_query']	= array(
+					array(
+						'key' => 'sp_team',
+						'value' => $teams,
+						'compare' => 'IN',
+					),
+				);
+			}
+			
+			if ( 'auto' === $this->date ) {
+				if ( 'any' === $this->status ) {
+					$args['post_status'] = 'publish';
+					$args['order'] = 'DESC';
+					$args['posts_per_page'] = ceil( $this->number / 2 );
+					$results = get_posts( $args );
+					$results = array_reverse( $results, true );
+					
+					$args['post_status'] = 'future';
+					$args['order'] = 'ASC';
+					$args['posts_per_page'] = floor( $this->number / 2 );
+					$fixtures = get_posts( $args );
+					
+					$events = array_merge_recursive( $results, $fixtures );
+				}
+			} else {
+				$events = get_posts( $args );
+			}
 
 		else:
 			$events = null;

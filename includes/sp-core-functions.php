@@ -7,7 +7,7 @@
  * @author 		ThemeBoy
  * @category 	Core
  * @package 	SportsPress/Functions
- * @version     1.9.19
+ * @version     2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -1271,16 +1271,16 @@ if ( !function_exists( 'sp_sort_table_teams' ) ) {
 
 if ( !function_exists( 'sp_get_next_event' ) ) {
 	function sp_get_next_event( $args = array() ) {
-			$options = array(
-				'post_type' => 'sp_event',
-				'posts_per_page' => 1,
-				'order' => 'ASC',
-				'post_status' => 'future',
-				'meta_query' => $args,
-			);
-			$posts = get_posts( $options );
-			if ( $posts && is_array( $posts ) ) return array_pop( $posts );
-			else return false;
+		$options = array(
+			'post_type' => 'sp_event',
+			'posts_per_page' => 1,
+			'order' => 'ASC',
+			'post_status' => 'future',
+		);
+		$options = array_merge( $options, $args );
+		$posts = get_posts( $options );
+		if ( $posts && is_array( $posts ) ) return array_pop( $posts );
+		else return false;
 	}
 }
 
@@ -1331,15 +1331,16 @@ if ( !function_exists( 'sp_taxonomy_field' ) ) {
 function sp_get_text_options() {
 	$strings = apply_filters( 'sportspress_text', array(
 		__( 'Article', 'sportspress' ),
-		__( 'Scorecard', 'sportspress' ),
+		__( 'Box Score', 'sportspress' ),
 		__( 'Career Total', 'sportspress' ),
+		__( 'Competition', 'sportspress' ),
 		__( 'Current Team', 'sportspress' ),
 		__( 'Current Teams', 'sportspress' ),
 		__( 'Date', 'sportspress' ),
 		__( 'Defense', 'sportspress' ),
 		__( 'Details', 'sportspress' ),
 		__( 'Event', 'sportspress' ),
-		__( 'Competition', 'sportspress' ),
+		__( 'Fixtures', 'sportspress' ),
 		__( 'Nationality', 'sportspress' ),
 		__( 'Offense', 'sportspress' ),
 		__( 'Outcome', 'sportspress' ),

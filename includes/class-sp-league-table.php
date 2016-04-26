@@ -5,7 +5,7 @@
  * The SportsPress league table class handles individual league table data.
  *
  * @class 		SP_League_Table
- * @version     1.9.8
+ * @version     2.0
  * @package		SportsPress/Classes
  * @category	Class
  * @author 		ThemeBoy
@@ -35,6 +35,7 @@ class SP_League_Table extends SP_Custom_Post{
 		$usecolumns = get_post_meta( $this->ID, 'sp_columns', true );
 		$adjustments = get_post_meta( $this->ID, 'sp_adjustments', true );
 		$select = get_post_meta( $this->ID, 'sp_select', true );
+		$abbreviate_teams = get_option( 'sportspress_abbreviate_teams', 'yes' ) === 'yes' ? true : false;
 
 		// Get labels from result variables
 		$result_labels = (array)sp_get_var_labels( 'sp_result' );
@@ -537,16 +538,16 @@ class SP_League_Table extends SP_Custom_Post{
 			// Add team name to row
 			$merged[ $team_id ] = array();
 
-			$team_data['name'] = get_the_title( $team_id );
+			$team_data['name'] = sp_get_team_name( $team_id, $abbreviate_teams );
 
 			foreach ( $team_data as $key => $value ):
 
 				// Use static data if key exists and value is not empty, else use placeholder
 				if ( array_key_exists( $team_id, $tempdata ) && array_key_exists( $key, $tempdata[ $team_id ] ) && $tempdata[ $team_id ][ $key ] != '' ):
-					$merged[ $team_id ][ $key ] = $tempdata[ $team_id ][ $key ];
-				else:
-					$merged[ $team_id ][ $key ] = $value;
+					$value = $tempdata[ $team_id ][ $key ];
 				endif;
+				
+				$merged[ $team_id ][ $key ] = $value;
 
 			endforeach;
 
@@ -644,7 +645,6 @@ class SP_League_Table extends SP_Custom_Post{
 		// Repeat position if equal
 		return $this->pos;
 	}
-
 
 	/**
 	 * Calculate and add games back.

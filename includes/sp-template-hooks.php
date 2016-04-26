@@ -75,18 +75,14 @@ add_action( 'sportspress_before_single_team', 'sportspress_output_post_excerpt',
  * @see sportspress_output_team_staff()
  * @see sportspress_output_team_lists()
  * @see sportspress_output_team_tables()
+ * @see sportspress_output_team_events()
  */
 add_action( 'sportspress_single_team_content', 'sportspress_output_team_link', 0 );
 add_action( 'sportspress_single_team_content', 'sportspress_output_team_details', 10 );
 add_action( 'sportspress_single_team_content', 'sportspress_output_team_staff', 15 );
 add_action( 'sportspress_single_team_content', 'sportspress_output_team_lists', 20 );
 add_action( 'sportspress_single_team_content', 'sportspress_output_team_tables', 30 );
-
-/**
- * Before Single Table
- * @see sportspress_output_post_excerpt()
- */
-add_action( 'sportspress_before_single_table', 'sportspress_output_post_excerpt', 20 );
+add_action( 'sportspress_single_team_content', 'sportspress_output_team_events', 40 );
 
 /**
  * Single Table Content
@@ -272,18 +268,6 @@ function sportspress_team_permalink( $permalink, $post ) {
 }
 add_filter( 'post_type_link', 'sportspress_team_permalink', 10, 2 );
 
-function sportspress_abbreviate_team( $title, $id = null ) {
-    if ( ! is_admin() && 'sp_team' == get_post_type( $id ) && get_option( 'sportspress_abbreviate_teams', 'yes' ) == 'yes' ):
-		if ( in_the_loop() && get_the_ID() == $id ) return $title;
-    	$abbreviation = get_post_meta( $id, 'sp_abbreviation', true );
-    	if ( ! empty( $abbreviation ) ):
-    		return $abbreviation;
-    	endif;
-    endif;
-    return $title;
-}
-add_filter( 'the_title', 'sportspress_abbreviate_team', 10, 2 );
-
 function sportspress_no_terms_links( $term_list, $taxonomy ) {
 
     if ( in_array( $taxonomy, array( 'sp_league', 'sp_season', 'sp_position', 'sp_role' ) ) )
@@ -292,6 +276,20 @@ function sportspress_no_terms_links( $term_list, $taxonomy ) {
     return $term_list;
 }
 add_filter( 'the_terms', 'sportspress_no_terms_links', 10, 2 );
+
+function sportspress_strcmp_term_slug( $a, $b ) {
+    return strcmp( $a->slug, $b->slug );
+}
+
+function sportspress_term_order( $terms, $post_id, $taxonomy ) {
+
+    if ( is_sp_taxonomy( $taxonomy ) ) {
+    	uasort( $terms, 'sportspress_strcmp_term_slug' );
+    }
+
+    return $terms;
+}
+add_filter( 'get_the_terms', 'sportspress_term_order', 10, 3 );
 
 function sportspress_pre_get_posts( $query ) {
 	$post_type = sp_array_value( $query->query, 'post_type', null );
@@ -311,7 +309,8 @@ function sportspress_pre_get_posts( $query ) {
 		endif;
 	else:
 		if ( isset( $query->query[ 'sp_venue' ] ) ):
-        	$GLOBALS[ 'wp_post_statuses' ][ 'future' ]->public = true;
+			$query->set( 'post_type', 'sp_event' );
+			$GLOBALS[ 'wp_post_statuses' ][ 'future' ]->public = true;
 		endif;
 	endif;
 

@@ -4,7 +4,7 @@
  *
  * @author 		ThemeBoy
  * @package 	SportsPress/Templates
- * @version     1.9
+ * @version     2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -19,6 +19,8 @@ $defaults = array(
 	'date_to' => 'default',
 	'league' => null,
 	'season' => null,
+	'venue' => null,
+	'team' => null,
 	'initial' => true,
 	'caption_tag' => 'h4',
 	'show_all_events_link' => false,
@@ -26,32 +28,31 @@ $defaults = array(
 
 extract( $defaults, EXTR_SKIP );
 
-if ( isset( $id ) ):
-	$calendar = new SP_Calendar( $id );
-	if ( $status != 'default' )
-		$calendar->status = $status;
-	if ( $date != 'default' )
-		$calendar->date = $date;
-	if ( $date_from != 'default' )
-		$calendar->from = $date_from;
-	if ( $date_to != 'default' )
-		$calendar->to = $date_to;
-	if ( $league )
-		$calendar->league = $league;
-	if ( $season )
-		$calendar->season = $season;
-	$events = $calendar->data();
-	$event_ids = array();
-	foreach ( $events as $event ):
-		$event_ids[] = $event->ID;
-	endforeach;
-	if ( empty( $event_ids ) )
-		$in = 'AND 1 = 0'; // False logic to prevent SQL error
-	else
-		$in = 'AND ID IN (' . implode( ', ', $event_ids ) . ')';
-else:
-	$in = '';
-endif;
+$calendar = new SP_Calendar( $id );
+if ( $status != 'default' )
+	$calendar->status = $status;
+if ( $date != 'default' )
+	$calendar->date = $date;
+if ( $date_from != 'default' )
+	$calendar->from = $date_from;
+if ( $date_to != 'default' )
+	$calendar->to = $date_to;
+if ( $league )
+	$calendar->league = $league;
+if ( $season )
+	$calendar->season = $season;
+if ( $venue )
+	$calendar->venue = $venue;
+if ( $team )
+	$calendar->team = $team;
+$events = $calendar->data();
+
+if ( empty( $events ) ) {
+	$in = 'AND 1 = 0'; // False logic to prevent SQL error
+} else {
+	$event_ids = wp_list_pluck( $events, 'ID' );
+	$in = 'AND ID IN (' . implode( ', ', $event_ids ) . ')';
+}
 
 // week_begins = 0 stands for Sunday
 $week_begins = intval(get_option('start_of_week'));

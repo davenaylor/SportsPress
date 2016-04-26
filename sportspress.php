@@ -3,11 +3,11 @@
  * Plugin Name: SportsPress
  * Plugin URI: http://themeboy.com/sportspress/
  * Description: Manage your club and its players, staff, events, league tables, and player lists.
- * Version: 1.9.20
+ * Version: 2.0.1
  * Author: ThemeBoy
  * Author URI: http://themeboy.com
  * Requires at least: 3.8
- * Tested up to: 4.4
+ * Tested up to: 4.5
  *
  * Text Domain: sportspress
  * Domain Path: /languages/
@@ -26,14 +26,14 @@ if ( ! class_exists( 'SportsPress' ) ) :
  * Main SportsPress Class
  *
  * @class SportsPress
- * @version	1.9.20
+ * @version	2.0.1
  */
 final class SportsPress {
 
 	/**
 	 * @var string
 	 */
-	public $version = '1.9.20';
+	public $version = '2.0.1';
 
 	/**
 	 * @var SportsPress The single instance of the class
@@ -55,6 +55,11 @@ final class SportsPress {
 	 * @var SP_Formats $formats
 	 */
 	public $formats = null;
+
+	/**
+	 * @var SP_Templates $templates
+	 */
+	public $templates = null;
 
 	/**
 	 * @var array
@@ -223,6 +228,7 @@ final class SportsPress {
 		include_once( 'includes/class-sp-modules.php' );						// Defines available modules
 		include_once( 'includes/class-sp-countries.php' );						// Defines continents and countries
 		include_once( 'includes/class-sp-formats.php' );						// Defines custom post type formats
+		include_once( 'includes/class-sp-templates.php' );						// Defines custom post type templates
 		include_once( 'includes/class-sp-feeds.php' );							// Adds feeds
 		
 		// Include template functions making them pluggable by plugins and themes.
@@ -235,10 +241,10 @@ final class SportsPress {
 		include_once( 'includes/class-sp-wpml.php' );
 
 		// REST API
-		//include_once( 'includes/class-sp-rest-api.php' );
+		include_once( 'includes/api/class-sp-rest-api.php' );
 
 		// TGMPA
-		require_once dirname( __FILE__ ) . '/includes/libraries/class-tgm-plugin-activation.php';
+		include_once( 'includes/libraries/class-tgm-plugin-activation.php' );
 	}
 
 	/**
@@ -288,6 +294,7 @@ final class SportsPress {
 		$this->modules = new SP_Modules();		// Modules class
 		$this->countries = new SP_Countries();	// Countries class
 		$this->formats = new SP_Formats();		// Formats class
+		$this->templates = new SP_Templates();	// Templates class
 		$this->feeds = new SP_Feeds(); 			// Feeds class
 
 		// Load string options

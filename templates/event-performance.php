@@ -4,7 +4,7 @@
  *
  * @author 		ThemeBoy
  * @package 	SportsPress/Templates
- * @version     1.9.19
+ * @version     2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -15,6 +15,7 @@ $show_staff = get_option( 'sportspress_event_show_staff', 'yes' ) === 'yes' ? tr
 $show_total = get_option( 'sportspress_event_show_total', 'yes' ) === 'yes' ? true : false;
 $show_numbers = get_option( 'sportspress_event_show_player_numbers', 'yes' ) === 'yes' ? true : false;
 $sections = get_option( 'sportspress_event_performance_sections', -1 );
+$abbreviate_teams = get_option( 'sportspress_abbreviate_teams', 'yes' ) === 'yes' ? true : false;
 $reverse_teams = get_option( 'sportspress_event_performance_reverse_teams', 'no' ) === 'yes' ? true : false;
 $primary = sp_get_main_performance_option();
 $total = get_option( 'sportspress_event_total_performance', 'all');
@@ -105,7 +106,7 @@ if ( is_array( $teams ) ):
 			'show_players' => $show_players,
 			'show_numbers' => $show_numbers,
 			'show_total' => $show_total,
-			'caption' => __( 'Scorecard', 'sportspress' ),
+			'caption' => __( 'Box Score', 'sportspress' ),
 			'labels' => $labels,
 			'formats' => $formats,
 			'mode' => $mode,
@@ -212,7 +213,7 @@ if ( is_array( $teams ) ):
 								'show_players' => $show_team_players,
 								'show_numbers' => $show_numbers,
 								'show_total' => $show_total,
-								'caption' => 0 == $s && $team_id ? get_the_title( $team_id ) : null,
+								'caption' => 0 == $s && $team_id ? sp_get_team_name( $team_id, $abbreviate_teams ) : null,
 								'labels' => $labels[ $section_id ],
 								'formats' => $formats,
 								'mode' => $mode,
@@ -247,7 +248,7 @@ if ( is_array( $teams ) ):
 						'show_players' => $show_team_players,
 						'show_numbers' => $show_numbers,
 						'show_total' => $show_total,
-						'caption' => $team_id ? get_the_title( $team_id ) : null,
+						'caption' => $team_id ? sp_get_team_name( $team_id, $abbreviate_teams ) : null,
 						'labels' => $labels,
 						'formats' => $formats,
 						'mode' => $mode,

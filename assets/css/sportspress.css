@@ -16,6 +16,7 @@
 .sp-header {
 	position: relative;
 	overflow: visible;
+	z-index: 10000;
 }
 
 /* Templates */
@@ -90,6 +91,11 @@
 .sp-data-table .data-number,
 .sp-data-table .data-rank {
 	width: 1px;
+}
+
+/* Post Content */
+.sp-post-content {
+	clear: both;
 }
 
 /* Pagination */
@@ -318,6 +324,9 @@
 	width: auto;
 	height: auto;
 }
+.sp-fixtures-results {
+	clear: both;
+}
 .widget .sp-event-blocks .sp-event-title {
 	margin: 10px;
 	padding: 0;
@@ -326,6 +335,7 @@
 
 /* Countdowns */
 .sp-template-countdown .event-name {
+	clear: both;
 	overflow: hidden;
 }
 .sp-template-countdown .team-logo {
@@ -436,5 +446,13 @@
 	.sp-event-logos-2 .sp-team-logo .sp-team-result {
 		display: inline-block;
 		margin: 0 0.25em;
+	}
+	
+	.sp-template-logo + .sp-post-content {
+		clear: left;
+	}
+	
+	.sp-template-photo + .sp-post-content {
+		clear: none;
 	}
 }

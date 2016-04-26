@@ -4,7 +4,7 @@
  *
  * @author 		ThemeBoy
  * @package 	SportsPress/Templates
- * @version     1.9.13
+ * @version     2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -18,11 +18,14 @@ $defaults = array(
 	'date_to' => 'default',
 	'league' => null,
 	'season' => null,
+	'venue' => null,
+	'team' => null,
 	'number' => -1,
 	'show_team_logo' => get_option( 'sportspress_event_list_show_logos', 'no' ) == 'yes' ? true : false,
 	'link_events' => get_option( 'sportspress_link_events', 'yes' ) == 'yes' ? true : false,
 	'link_teams' => get_option( 'sportspress_link_teams', 'no' ) == 'yes' ? true : false,
 	'link_venues' => get_option( 'sportspress_link_venues', 'yes' ) == 'yes' ? true : false,
+	'abbreviate_teams' => get_option( 'sportspress_abbreviate_teams', 'yes' ) === 'yes' ? true : false,
 	'sortable' => get_option( 'sportspress_enable_sortable_tables', 'yes' ) == 'yes' ? true : false,
 	'scrollable' => get_option( 'sportspress_enable_scrollable_tables', 'yes' ) == 'yes' ? true : false,
 	'paginated' => get_option( 'sportspress_event_list_paginated', 'yes' ) == 'yes' ? true : false,
@@ -48,6 +51,10 @@ if ( $league )
 	$calendar->league = $league;
 if ( $season )
 	$calendar->season = $season;
+if ( $venue )
+	$calendar->venue = $venue;
+if ( $team )
+	$calendar->team = $team;
 if ( $order != 'default' )
 	$calendar->order = $order;
 $data = $calendar->data();
@@ -163,7 +170,7 @@ endif;
 
 					if ( $teams ):
 						foreach ( $teams as $team ):
-							$name = get_the_title( $team );
+							$name = sp_get_team_name( $team, $abbreviate_teams );
 							if ( $name ):
 
 								if ( $show_team_logo ):

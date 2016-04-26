@@ -5,7 +5,7 @@
  * The SportsPress modules class stores available modules.
  *
  * @class 		SP_Modules
- * @version     1.9
+ * @version     2.0
  * @package		SportsPress/Classes
  * @category	Class
  * @author 		ThemeBoy
@@ -28,6 +28,13 @@ class SP_Modules {
 					'label' => __( 'Calendars', 'sportspress' ),
 					'icon' => 'sp-icon-calendar',
 					'desc' => __( 'Organize and publish calendars using different layouts.', 'sportspress' ),
+				),
+				'scoreboard' => array(
+					'label' => __( 'Scoreboard', 'sportspress' ),
+					'class' => 'SportsPress_Scoreboard',
+					'icon' => 'sp-icon-scoreboard',
+					'link' => 'http://tboy.co/pro',
+					'desc' => __( 'Display multiple event results in a horizontal scoreboard.', 'sportspress' ),
 				),
 				'match_stats' => array(
 					'label' => __( 'Match Stats', 'sportspress' ),

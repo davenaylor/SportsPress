@@ -5,7 +5,7 @@
  * @author 		ThemeBoy
  * @category 	Admin
  * @package 	SportsPress/Admin/Meta_Boxes
- * @version     1.9.19
+ * @version     2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -29,7 +29,7 @@ class SP_Meta_Box_Event_Performance {
 			$manual = false;
 
 		// Determine if we need checkboxes
-		if ( $manual && $i == 0 )
+		if ( $manual )
 			$has_checkboxes = true;
 		else
 			$has_checkboxes = false;
@@ -179,7 +179,7 @@ class SP_Meta_Box_Event_Performance {
 						?>
 						<div>
 							<p><strong><?php echo get_the_title( $team_id ); ?> &mdash; <?php echo $section_label; ?></strong></p>
-							<?php self::table( $labels[ $section_id ], $columns, $data[ $section_id ], $team_id, $has_checkboxes, $positions, $status, $section_id, $formats, $order, $numbers ); ?>
+							<?php self::table( $labels[ $section_id ], $columns, $data[ $section_id ], $team_id, ( $has_checkboxes && 0 === $i ), $positions, $status, $section_id, $formats, $order, $numbers ); ?>
 							<?php do_action( 'sportspress_after_event_performance_table_admin', $labels[ $section_id ], $columns, $data[ $section_id ], $team_id ); ?>
 						</div>
 						<?php

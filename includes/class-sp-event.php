@@ -5,7 +5,7 @@
  * The SportsPress event class handles individual event data.
  *
  * @class 		SP_Event
- * @version		1.9.19
+ * @version		2.0
  * @package		SportsPress/Classes
  * @category	Class
  * @author 		ThemeBoy
@@ -24,6 +24,12 @@ class SP_Event extends SP_Custom_Post{
 			}
 		}
 		return $post_status;
+	}
+	
+	public function minutes() {
+		$minutes = get_post_meta( $this->ID, 'sp_minutes', true );
+		if ( '' === $minutes ) $minutes = 90;
+		return $minutes;
 	}
 
 	public function results( $admin = false ) {
