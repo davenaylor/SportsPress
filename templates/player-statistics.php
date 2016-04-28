@@ -4,7 +4,7 @@
  *
  * @author 		ThemeBoy
  * @package 	SportsPress/Templates
- * @version     2.0
+ * @version     2.0.3
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -55,10 +55,16 @@ if ( is_array( $leagues ) ):
 
 			sp_get_template( 'player-statistics-league.php', array(
 				'data' => $player->data( $league->term_id, false, $section_id ),
-				'league' => $league,
 				'caption' => $caption,
 				'scrollable' => $scrollable,
 			) );
 		endforeach;
+
+		sp_get_template( 'player-statistics-league.php', array(
+			'data' => $player->data( 0, false, $section_id ),
+			'caption' => __( 'Career Total', 'sportspress' ),
+			'scrollable' => $scrollable,
+			'hide_teams' => true,
+		) );
 	}
 endif;
